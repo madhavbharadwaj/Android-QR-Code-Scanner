@@ -19,8 +19,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //View Objects
     private Button buttonScan;
-    private TextView textViewName, textViewAddress;
-
+    private TextView textViewName, textViewPrice,textViewCount,textViewTotal;
+    int sum1=0;
+    int itemcount = 0;
+    //reset button
+    Button buttonReset;
     //qr code scanner object
     private IntentIntegrator qrScan;
 
@@ -32,18 +35,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //View objects
         buttonScan = (Button) findViewById(R.id.buttonScan);
         textViewName = (TextView) findViewById(R.id.textViewName);
-        textViewAddress = (TextView) findViewById(R.id.textViewAddress);
-
+        textViewPrice = (TextView) findViewById(R.id.textViewPrice);
+        textViewCount = (TextView) findViewById(R.id.textViewCount);
+        textViewTotal = (TextView) findViewById(R.id.textViewTotal);
         //intializing scan object
         qrScan = new IntentIntegrator(this);
-
         //attaching onclick listener
         buttonScan.setOnClickListener(this);
     }
-
+    public void onClickBtn(View v) {
+        Toast.makeText(this, "Cleared", Toast.LENGTH_LONG).show();
+        sum1=0;
+        itemcount=0;
+        textViewName.setText("");
+        textViewPrice.setText("");
+        textViewCount.setText("0");
+        textViewTotal.setText("");
+    }
     //Getting the scan results
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             //if qrcode has nothing in it
@@ -56,7 +68,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     JSONObject obj = new JSONObject(result.getContents());
                     //setting values to textviews
                     textViewName.setText(obj.getString("prod_name"));
-                    textViewAddress.setText(obj.getString("prod_price"));
+                    textViewPrice.setText(obj.getString("prod_price"));
+                    String x = obj.getString("prod_price");
+                    int s = Integer.parseInt(x);
+                    sum1+=s;
+                    itemcount = itemcount + 1;
+                    textViewCount.setText(String.valueOf(itemcount));
+                    textViewTotal.setText(String.valueOf(sum1));
                 } catch (JSONException e) {
                     e.printStackTrace();
                     //if control comes here
